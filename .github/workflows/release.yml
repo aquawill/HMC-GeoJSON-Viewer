@@ -2,6 +2,7 @@ name: Build and Release EXE
 
 on:
   push:
+    branches: ["main"]
     tags:
       - 'v*' # 例如 v1.0.0
 
