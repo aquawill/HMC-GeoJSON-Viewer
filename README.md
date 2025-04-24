@@ -92,6 +92,7 @@ Use the query button in the UI to open the JSON editor and enter your structured
 ```
 This query finds features where both conditions under `properties.trafficMessageChannelCode` are met.
 
+![](https://i.imgur.com/CVwNq8g.gif)
 
 
 ---
