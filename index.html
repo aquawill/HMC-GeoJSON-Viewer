@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>HMC GeoJSON Viewerr</title>
+    <link
+      href="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.css"
+      rel="stylesheet"
+    />
+    <link href="style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="toolbar">
+      <button id="chooseDir" type="button">Choose Folder</button>
+      <select id="fileSelect"></select>
+      <label style="margin-left: 10px">
+        <input type="checkbox" id="keepViewCheckbox" /> Lock Map
+      </label>
+      <button id="openQuery" type="button">Query</button>
+      <button id="exportBtn" type="button">Export</button>
+    </div>
+
+    <div id="queryModal" class="modal hidden">
+      <div class="modal-content">
+        <textarea
+          id="queryInput"
+          placeholder='NoSQL query like { "locationCode": 26619 } or { "$or": [{"a":1},{"b":2}] }'
+        ></textarea>
+        <div class="modal-buttons">
+          <button id="runQuery">Search</button>
+          <button id="closeQuery">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="map"></div>
+    <div id="mapStatusOverlay">Lat: –, Lng: –, Zoom: –</div>
+    <script src="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+    <script src="dist/renderer.bundle.js"></script>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+{
+  "name": "geojson-viewer",
+  "version": "1.0.0",
+  "description": "A desktop viewer for HMC GeoJSON files.",
+  "author": "Your Name",
+  "main": "main.js",
+  "build": {
+    "appId": "edu.self.geojsonviewer",
+    "productName": "HMC GeoJSON Viewer",
+    "npmRebuild": false,
+    "nodeGypRebuild": false,
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/some-module/**/*"
+    ],
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "preload.js",
+      "index.html",
+      "style.css",
+      "!node_modules/**/*",
+      "!*.config.js",
+      "!webpack.config.js",
+      "!package-lock.json",
+      "!renderer.js"
+    ],
+    "extraResources": [],
+    "win": {
+      "target": "portable"
+    }
+  },
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "start": "electron .",
+    "dev": "concurrently \"npm run watch\" \"npm run start\"",
+    "dist": "npm run build && electron-builder"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "css-loader": "^7.1.2",
+    "electron": "^28.1.0",
+    "electron-builder": "^26.0.12",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.99.6",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "codemirror": "^5.65.19"
+  }
+}
