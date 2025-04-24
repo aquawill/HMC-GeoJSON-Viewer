@@ -2,7 +2,6 @@ name: Build and Release EXE
 
 on:
   push:
-    branches: ["main"]
     tags:
       - 'v*' # 例如 v1.0.0
 
@@ -31,4 +30,4 @@ jobs:
           files: |
             dist/*.exe
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
