@@ -2,11 +2,12 @@
   "name": "geojson-viewer",
   "version": "1.0.0",
   "description": "A desktop viewer for HMC GeoJSON files.",
-  "author": "Your Name",
+  "author": "https://github.com/aquawill",
   "main": "main.js",
   "build": {
     "appId": "edu.self.geojsonviewer",
     "productName": "HMC GeoJSON Viewer",
+	"icon": "assets/icon.ico",
     "npmRebuild": false,
     "nodeGypRebuild": false,
     "asar": true,
