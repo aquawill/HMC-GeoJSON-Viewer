@@ -2,7 +2,7 @@
 
 A desktop application specifically designed for HERE Map Content GeoJSON files. This viewer allows you to quickly browse, visualize, query, and highlight large-scale GeoJSON files with support for dynamic map styling, query filtering, and automation.
 
-## 🆕 What's New in v1.1.0
+## 🆕 What's New in v1.1.1
 
 - 📋 **Click-to-copy JSON path** for easy query construction
 - 💻 **Keyboard Shortcuts**:
