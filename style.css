@@ -112,17 +112,19 @@ html {
   pointer-events: none;
 }
 
+/* 共用 modal 設計 */
 .modal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
 }
 
 .modal.hidden {
@@ -130,37 +132,72 @@ html {
 }
 
 .modal-content {
-  background: #fff;
+  background: #ffffff;
   padding: 20px;
-  border-radius: 10px;
-  width: 500px;
-  max-width: 90vw;
-  box-shadow: 0 0 10px #000;
-  display: flex;
-  flex-direction: column;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+  text-align: left;
+  width: 600px;
+  max-height: 80vh;
+  overflow: auto;
 }
 
-#queryInput {
-  width: 100%;
-  height: 200px;
+.modal-content h3 {
+  margin-bottom: 12px;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* Goto Input */
+.gotoInput {
+  width: 300px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   font-family: monospace;
   font-size: 14px;
-  margin-bottom: 10px;
 }
 
+#gotoInput {
+  color: #000;
+  width: 80%;
+  padding: 6px 8px;
+  font-size: 14px;
+}
+
+#gotoModal .modal-content {
+  width: 400px;
+  padding: 20px;
+}
+
+#gotoModal .modal-content h3 {
+  color: black;
+}
+
+/* Buttons */
 .modal-buttons {
-  text-align: right;
+  margin-top: 15px;
 }
 
 .modal-buttons button {
-  margin-left: 8px;
+  margin: 0 8px;
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+
+.json-value {
+  cursor: pointer;
+  text-decoration: underline dotted;
 }
 
 .CodeMirror {
-  height: auto;
+  height: 300px;
   font-family: monospace;
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 .CodeMirror-scroll {
   padding-left: 6px;
@@ -180,4 +217,8 @@ html {
 }
 .CodeMirror pre.CodeMirror-line {
   padding-left: 6px !important;
+}
+
+#queryInput {
+  width: 100%;
 }

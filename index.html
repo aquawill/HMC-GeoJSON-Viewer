@@ -35,6 +35,17 @@
 
     <div id="map"></div>
     <div id="mapStatusOverlay">Lat: –, Lng: –, Zoom: –</div>
+    <div id="gotoModal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Go to Coordinates</h3>
+        <input id="gotoInput" type="text" class="goto-input" />
+        <div class="modal-buttons">
+          <button id="gotoBtn">Go</button>
+          <button id="closeGoto">Close</button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.js"></script>
     <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
     <script src="dist/renderer.bundle.js"></script>

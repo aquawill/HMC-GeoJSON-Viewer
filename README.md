@@ -2,6 +2,16 @@
 
 A desktop application specifically designed for HERE Map Content GeoJSON files. This viewer allows you to quickly browse, visualize, query, and highlight large-scale GeoJSON files with support for dynamic map styling, query filtering, and automation.
 
+## 🆕 What's New in v1.1.0
+
+- 📋 **Click-to-copy JSON path** for easy query construction
+- 💻 **Keyboard Shortcuts**:
+  - `Ctrl+F` to open search
+  - `Ctrl+G` auto-focus to geo-coordinates
+  - `Ctrl+Enter` to run query
+  - `Esc` to close modals
+- 🐛 **Minor bug fixes**
+
 ---
 
 ## 🔧 Requirements
@@ -9,11 +19,14 @@ A desktop application specifically designed for HERE Map Content GeoJSON files. 
 This project is built using [Node.js](https://nodejs.org/) and Electron, with support from several development libraries and modules.
 
 ### Required Software:
+
 - Node.js (v18 or later recommended)
 - npm (comes with Node.js)
 
 ### Required Packages:
+
 These will be installed automatically by `npm install`:
+
 - `electron`
 - `electron-builder`
 - `webpack`, `webpack-cli`
@@ -22,6 +35,7 @@ These will be installed automatically by `npm install`:
 - `concurrently`
 
 If you want to build the application yourself, run:
+
 ```bash
 npm install
 npm run dist
@@ -50,6 +64,7 @@ npm run dist
 ## 🔍 Query Examples
 
 ### NoSQL-style Key/Value Query
+
 ```json
 {
   "attributeOrientation": "FORWARD"
@@ -57,6 +72,7 @@ npm run dist
 ```
 
 ### Regex Pattern Match
+
 ```json
 {
   "orientedSegmentRef.0.segmentRef.identifier": {
@@ -66,6 +82,7 @@ npm run dist
 ```
 
 ### Combined AND/OR Conditions
+
 ```json
 {
   "$or": [
@@ -82,18 +99,21 @@ npm run dist
 Use the query button in the UI to open the JSON editor and enter your structured query. Results will be highlighted on the map.
 
 ### Example: Combined AND Match
+
 ```json
 {
   "$and": [
-    {"properties.trafficMessageChannelCode.locationCode": 52639},
-    {"properties.trafficMessageChannelCode.locationDisposition": "EXTERNAL_POSITIVE_DIRECTION"}
+    { "properties.trafficMessageChannelCode.locationCode": 52639 },
+    {
+      "properties.trafficMessageChannelCode.locationDisposition": "EXTERNAL_POSITIVE_DIRECTION"
+    }
   ]
 }
 ```
+
 This query finds features where both conditions under `properties.trafficMessageChannelCode` are met.
 
 ![](https://i.imgur.com/CVwNq8g.gif)
-
 
 ---
 
@@ -106,9 +126,9 @@ This project includes a GitHub Actions-powered CI/CD pipeline. On tag push, the 
 1. Push Git tag (e.g. `v1.0.0`)
 2. GitHub Actions triggers `release.yml`
 3. Executes:
-    - `npm install`
-    - `npm run dist` (Webpack + Electron Builder)
-    - Uses `softprops/action-gh-release` to upload `.exe` with `GH_PAT`
+   - `npm install`
+   - `npm run dist` (Webpack + Electron Builder)
+   - Uses `softprops/action-gh-release` to upload `.exe` with `GH_PAT`
 4. Final executable appears under [Releases](https://github.com/<your-username>/geojson-viewer/releases)
 
 ### Setup Instructions

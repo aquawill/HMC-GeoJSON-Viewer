@@ -212,12 +212,10 @@ function loadGeoJSON(filePath) {
       filter: ["==", "$type", "Point"],
     });
 
-    // features = geojsonData.features;
-
     if (!document.getElementById("keepViewCheckbox").checked) {
       map.fitBounds(getFeaturesBound(geojsonData.features), { padding: 20 });
     }
-    setupSearch(geojsonData.features);
+    // setupSearch(geojsonData.features);
   } catch (err) {
     console.error("GeoJSON loading error:", err);
     showErrorBox("Unable to load GeoJSON：" + err.message);
@@ -245,7 +243,7 @@ document.getElementById("fileSelect").addEventListener("change", (e) => {
 function highlightFeatures(features) {
   for (let index = 0; index < features.length; index++) {
     const element = features[index];
-    console.log(element);
+    // console.log(element);
 
     map.addSource("highlight-feature-" + index, {
       type: "geojson",
@@ -335,7 +333,7 @@ map.on("click", (e) => {
       return `
     <div class="feature-block">
       <details open>
-        <summary>Feature ${i + 1}</summary>
+        <summary>Feature ${i + 1} | Type: ${f.geometry.type}</summary>
         <button class="copy-btn" data-json='${encodeURIComponent(
           jsonText
         )}'>📋 Copy JSON</button>
@@ -361,32 +359,77 @@ document.addEventListener("click", (e) => {
       setTimeout(() => (e.target.textContent = "Copy JSON"), 1500);
     });
   }
+  if (e.target.classList.contains("json-value")) {
+    const path = e.target.getAttribute("data-path");
+    const rawVal = e.target.getAttribute("data-value");
+
+    try {
+      const val = JSON.parse(rawVal);
+      const obj = {};
+      path.split(".").reduce((acc, key, idx, arr) => {
+        if (idx === arr.length - 1) {
+          acc[key] = val;
+        } else {
+          acc[key] = {};
+        }
+        return acc[key];
+      }, obj);
+
+      const text = JSON.stringify(obj, null, 2);
+      navigator.clipboard.writeText(text).then(() => {
+        showErrorBox(`📋 Copied: ${path}`);
+      });
+    } catch {
+      showErrorBox("❌ Failed to copy value.");
+    }
+  }
 });
 
-function syntaxHighlight(json) {
-  if (typeof json !== "string") {
-    json = JSON.stringify(json, null, 2);
+function syntaxHighlight(json, path = "") {
+  if (typeof json !== "object" || json === null) {
+    return highlightValue(json, path);
   }
 
-  json = json
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  if (Array.isArray(json)) {
+    return (
+      "[\n" +
+      json
+        .map((item, i) => "  " + syntaxHighlight(item, `${path}.${i}`))
+        .join(",\n") +
+      "\n]"
+    );
+  }
 
-  return json.replace(
-    /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(:)?|\b(true|false|null)\b|-?\d+(\.\d+)?([eE][+-]?\d+)?)/g,
-    (match) => {
-      let cls = "number";
-      if (/^"/.test(match)) {
-        cls = /:$/.test(match) ? "key" : "string";
-      } else if (/true|false/.test(match)) {
-        cls = "boolean";
-      } else if (/null/.test(match)) {
-        cls = "null";
-      }
-      return `<span class="json-${cls}">${match}</span>`;
-    }
+  return (
+    "{\n" +
+    Object.entries(json)
+      .map(([key, value]) => {
+        const subPath = path ? `${path}.${key}` : key;
+        return `  <span class="json-key">"${key}"</span>: ${syntaxHighlight(
+          value,
+          subPath
+        )}`;
+      })
+      .join(",\n") +
+    "\n}"
   );
+}
+
+function highlightValue(value, path) {
+  const type = typeof value;
+  const display = JSON.stringify(value);
+  const cls =
+    type === "string"
+      ? "string"
+      : type === "number"
+      ? "number"
+      : type === "boolean"
+      ? "boolean"
+      : value === null
+      ? "null"
+      : "";
+
+  return `<span class="json-value json-${cls}" data-path="${path}" data-value='${display}'>${display}</span>`;
 }
 
 function cleanProperties(obj) {
@@ -499,7 +542,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("runQuery").addEventListener("click", () => {
     modal.classList.add("hidden");
     const raw = editor.getValue().trim();
-    console.log(raw);
+    // console.log(raw);
     if (!raw) return;
     let query;
     try {
@@ -512,6 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
       queryMatchesFeature(f, query)
     );
     console.log(matched);
+    clearHighlighAndPopup();
     highlightFeatures(matched);
     if (!document.getElementById("keepViewCheckbox").checked) {
       map.fitBounds(getFeaturesBound(matched), { padding: 80 });
@@ -586,11 +630,13 @@ document.addEventListener("DOMContentLoaded", () => {
       matchBrackets: true,
       theme: "default",
     });
+    editor.setValue("{}");
   }
 });
 
-// CTRL+B beautify
+// 熱鍵設定
 document.addEventListener("keydown", (e) => {
+  // 搜尋框 JSON 語法排版
   if (e.key === "b" && e.ctrlKey && editor) {
     try {
       const raw = editor.getValue();
@@ -601,15 +647,31 @@ document.addEventListener("keydown", (e) => {
     }
     e.preventDefault();
   }
-});
 
-// hotkey
-document.addEventListener("keydown", (e) => {
   const modal = document.getElementById("queryModal");
-  if (!modal || modal.classList.contains("hidden")) return;
+  const gotoModal = document.getElementById("gotoModal");
 
+  // Ctrl+F 開啟搜尋框
+  if (e.key === "f" && e.ctrlKey) {
+    e.preventDefault();
+    document.getElementById("queryModal").classList.remove("hidden");
+    editor?.focus();
+  }
+  // Ctrl+G 開啟經緯度輸入框
+  if (e.key === "g" && e.ctrlKey) {
+    e.preventDefault();
+    const lat = map.getCenter().lat.toFixed(6);
+    const lng = map.getCenter().lng.toFixed(6);
+    gotoModal.classList.remove("hidden");
+    const input = document.getElementById("gotoInput");
+    input.value = `${lat},${lng}`;
+    input.focus();
+  }
+
+  // ESC 隱藏所有輸入框
   if (e.key === "Escape") {
     modal.classList.add("hidden");
+    gotoModal.classList.add("hidden");
   } else if (
     e.key === "Enter" &&
     e.ctrlKey &&
@@ -624,5 +686,36 @@ document.addEventListener("keydown", (e) => {
       showErrorBox("Invalid NoSQL JSON.");
     }
     e.preventDefault();
+  } else if (
+    e.key === "Enter" &&
+    document.activeElement === document.getElementById("gotoInput")
+  ) {
+    document.getElementById("gotoBtn").click();
+    e.preventDefault();
+  }
+
+  if (!modal || modal.classList.contains("hidden")) return;
+});
+
+// 輸入經緯度移動地圖中心點
+document.getElementById("gotoBtn").addEventListener("click", () => {
+  const raw = document.getElementById("gotoInput").value.trim();
+  const parts = raw.split(/[, ]+/).map(parseFloat);
+
+  if (
+    parts.length === 2 &&
+    parts.every((n) => !isNaN(n)) &&
+    parts[0] >= -90 &&
+    parts[0] <= 90 && // 緯度
+    parts[1] >= -180 &&
+    parts[1] <= 180 // 經度
+  ) {
+    map.setCenter([parts[1], parts[0]]);
+    map.setZoom(map.getZoom()); // 保持目前 zoom
+    document.getElementById("gotoModal").classList.add("hidden");
+  } else {
+    showErrorBox(
+      "❌ Invalid coordinates (format: lat,lng, range: -90~90, -180~180)"
+    );
   }
 });
